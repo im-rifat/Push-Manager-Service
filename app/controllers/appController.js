@@ -19,9 +19,6 @@ createApp = (req, res) => {
                 return res.status(500).send({message: err});
             }
 
-            console.log("id: " + req.userId);
-            console.log(user);
-
             app.user = user._id;
 
             AppType.findOne({
@@ -64,7 +61,25 @@ getApps = (req, res) => {
     });
 }
 
+getApp = (req, res) => {
+    App.findById(req.params.id, (err, app) => {
+        if(err) {
+            if(err.name == 'CastError') {
+                return res.status(400).send({message: 'Invalid id'});
+            }
+            return res.status(500).send({message: err.message});
+        }
+
+        if(!app) {
+            return res.status(404).send({message: 'Not found!'});
+        }
+
+        res.send({message: app});
+    });
+}
+
 module.exports = {
     createApp,
-    getApps
+    getApps,
+    getApp
 }
