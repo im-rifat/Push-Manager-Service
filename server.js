@@ -20,7 +20,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }))
 
 require('./app/routes/authRoutes')(app);
-require('./app/routes/userRoutes')(app);
+require('./app/routes/roleRoutes')(app);
 
 const db = require('./app/models');
 const Role = db.role;
