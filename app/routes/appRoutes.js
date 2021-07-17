@@ -5,5 +5,6 @@ Router.get('/', appController.getApps);
 Router.post('/', appController.createApp);
 Router.get('/:id', appController.getApp);
 Router.put('/:id', appController.updateApp);
+Router.delete('/:id', appController.deleteApp);
 
 module.exports = Router;

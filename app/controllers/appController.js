@@ -96,9 +96,28 @@ updateApp = (req, res) => {
     })
 }
 
+deleteApp = (req, res) => {
+    App.findByIdAndDelete(req.params.id, (err, app) => {
+        if(err) {
+            if(err.name == 'CastError') {
+                return res.status(403).send({message: 'Invalid id'});
+            }
+
+            return res.status(500).send({message: err.message});
+        }
+
+        if(!app) {
+            return res.status(404).send({message: `Can not delete app with ${req.params.id}`});
+        }
+
+        return res.send({message: app});
+    })
+}
+
 module.exports = {
     createApp,
     getApps,
     getApp,
-    updateApp
+    updateApp,
+    deleteApp
 };
