@@ -21,9 +21,6 @@ app.use(bodyParser.urlencoded({ extended: true }))
 
 app.use('/api', require('./app/routes'));
 
-//require('./app/routes/authRoutes')(app);
-//require('./app/routes/roleRoutes')(app);
-
 const db = require('./app/models');
 const Role = db.role;
 const AppType = db.apptype;
