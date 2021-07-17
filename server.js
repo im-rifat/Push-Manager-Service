@@ -19,8 +19,10 @@ app.use(bodyParser.json());
 // parse requests of content-type: application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }))
 
-require('./app/routes/authRoutes')(app);
-require('./app/routes/roleRoutes')(app);
+app.use('/api', require('./app/routes'));
+
+//require('./app/routes/authRoutes')(app);
+//require('./app/routes/roleRoutes')(app);
 
 const db = require('./app/models');
 const Role = db.role;
