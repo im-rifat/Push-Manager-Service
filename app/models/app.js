@@ -12,7 +12,7 @@ const schema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'apptype'
     }
-});
+}, {timestamps: true});
 
 const App = mongoose.model('App', schema);
 
