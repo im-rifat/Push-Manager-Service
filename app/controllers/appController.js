@@ -55,7 +55,7 @@ createApp = (req, res) => {
 getApps = (req, res) => {
     App.find({
         user: req.userId
-    }, (err, result) => {
+    }).populate('user').populate('app_type').exec((err, result) => {
         if(err) {
             return res.status(500).send({message: err});
         }
