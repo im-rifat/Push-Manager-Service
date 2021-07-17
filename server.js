@@ -24,8 +24,7 @@ require('./app/routes/userRoutes')(app);
 
 const db = require('./app/models');
 const Role = db.role;
-
-//console.log(db);
+const AppType = db.apptype;
 
 db.mongoose.connect(dbConfig.DB_URI, {
     useNewUrlParser: true, useUnifiedTopology: true
@@ -64,10 +63,30 @@ function initial() {
                 }).save((err) => {
                     if (err) {
                         console.log(err);
+                    } else {
+                        console.log(`added ${db.Roles[i]} roles to collection`);
                     }
+                });
+            }
+        }
+    });
 
-                    console.log(`added ${db.Roles[i]} roles to collection`);
-                })
+    AppType.estimatedDocumentCount((err, count) => {
+        if(err) {
+            console.log(err);
+        }
+
+        if(!err && count == 0) {
+            for(let i = 0; i < db.AppTypes.length; i++) {
+                new AppType({
+                    name: db.AppTypes[i]
+                }).save((err, apptype) => {
+                    if(err) {
+                        console.log(err);
+                    } else {
+                        console.log(`${apptype.name} added to collecton`);
+                    }
+                });
             }
         }
     })

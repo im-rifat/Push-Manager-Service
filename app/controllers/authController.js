@@ -62,7 +62,7 @@ signup = (req, res) => {
 signIn = (req, res) => {
     User.findOne({
         username: req.body.username
-    }).then(user => {
+    }).populate('roles').then(user => {
         if (!user) {
             return res.status(404).send({ message: 'User not found' });
         }
@@ -82,7 +82,7 @@ signIn = (req, res) => {
 
         var authorities = [];
         for (let i = 0; i < user.roles.length; i++) {
-            authorities.push(`ROLE_${user.roles[i].name}`);
+            authorities.push('ROLE_' + user.roles[i].name.toUpperCase());
         }
 
         res.status(200).send({
