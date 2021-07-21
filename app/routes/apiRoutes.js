@@ -23,4 +23,6 @@ Router.use('/moderator', (req, res, next) => {
 
 Router.use('/auth', authRoutes);
 
+Router.use(require('../middlewares/errorHandler'));
+
 module.exports = Router;

@@ -1,117 +1,129 @@
 const db = require('../models');
+const error = require('../errors');
 
 const App = db.app;
 const User = db.user;
 const AppType = db.apptype;
 
-createApp = (req, res) => {
-    new App({
-        name: req.body.name,
-        package_name: req.body.package,
-        firebase_id: req.body.fId
-    }).save((err, app) => {
-        if(err) {
-            return res.status(500).send({message: err});
+createApp = async (req, res, next) => {
+    let savedapp;
+
+    try {
+        let newapp = new App({
+            name: req.body.name,
+            package_name: req.body.package,
+            firebase_id: req.body.fId
+        });
+
+        savedapp = await newapp.save();
+
+        let user = await User.findById(req.userId).exec();
+        let apptype = await AppType.findOne({
+            name: 'android'
+        }).exec();
+
+        savedapp.user = user._id;
+        savedapp.app_type = apptype._id;
+
+        savedapp = await savedapp.save();
+
+        res.send({
+            id: savedapp._id,
+            name: savedapp.name,
+            package: savedapp.package_name,
+            firebase_id: savedapp.firebase_id,
+            app_type: apptype._id
+        });
+
+    } catch(err) {
+        if(savedapp) {
+            try {
+                await App.findByIdAndDelete(savedapp._id).exec();
+            } catch(err) {
+                next(new error.ApiError('ISE', 500, true, err.message));
+                return;
+            }          
         }
 
-        User.findById(req.userId).exec((err, user) => {
-            if(err) {
-                return res.status(500).send({message: err});
-            }
-
-            app.user = user._id;
-
-            AppType.findOne({
-                name: 'android'
-            }, (err, apptype) => {
-                if(err) {
-                    return res.status(500).send({message: err});
-                }
-
-                app.app_type = apptype._id;
-
-                app.save((err) => {
-                    if(err) {
-                        return res.status(500).send({message: err});
-                    }
-
-                    res.send({
-                        id: app._id,
-                        name: app.name,
-                        package: app.package_name,
-                        firebase_id: app.firebase_id,
-                        app_type: apptype._id
-                    });
-                })
-            })
-
-        });
-    });
+        next(new error.ApiError('ISE', 500, true, err.message));
+    }
 };
 
-getApps = (req, res) => {
-    App.find({
-        user: req.userId
-    }).populate('user').populate('app_type').exec((err, result) => {
-        if(err) {
-            return res.status(500).send({message: err});
-        }
+getApps = async (req, res, next) => {
+    let apps;
 
-        res.send(result);
-    });
+    try {
+        apps = await App.find({
+            user: req.userId
+        }).populate('user').populate('app_type').exec();
+
+        res.send(apps);
+    } catch(err) {
+        next(new error.ApiError('ISE', 500, true, err.message));
+    }
 }
 
-getApp = (req, res) => {
-    App.findById(req.params.id, (err, app) => {
-        if(err) {
-            if(err.name == 'CastError') {
-                return res.status(400).send({message: 'Invalid id'});
-            }
-            return res.status(500).send({message: err.message});
-        }
+getApp = async (req, res, next) => {
+    let app;
+
+    try {
+        app = await App.findById(req.params.id).exec();
 
         if(!app) {
-            return res.status(404).send({message: 'Not found!'});
+            throw new error.Api404Error(`Not found with id ${req.params.id}`);
+        }
+
+        res.send(app);
+    } catch(err) {
+        if(err) {
+            if(err.name == 'CastError') {
+                next(new error.ApiError('Forbidden', 403, true, 'Invalid id'));
+            }
+
+            next(new Error.ApiError('ISE', 500, true, err.message));
+        }
+    }
+}
+
+updateApp = async (req, res, next) => {
+    let app;
+
+    try {
+        app = await App.findByIdAndUpdate(req.params.id, req.body, {new: true, useFindAndModify: false}).exec();
+
+        if(!app) {
+            throw new error.Api404Error(`Not found with id ${req.params.id}`);
         }
 
         res.send({message: app});
-    });
+    } catch(err) {
+        if(err.name == 'CastError') {
+            next(new Error.ApiError('Forbidden', 400, true, 'Invalid id'));
+        }
+
+        next(new error.ApiError('ISE', 500, true, err.message));
+    }
 }
 
-updateApp = (req, res) => {
-    App.findByIdAndUpdate(req.params.id, req.body, {new: true, useFindAndModify: false}, (err, app) => {
-        if(err) {
-            if(err.name == 'CastError') {
-                return res.status(400).send({message: 'Invalid id'});
-            }
+deleteApp = async (req, res, next) => {
+    let app;
 
-            return res.status(500).send({message: err.message});
-        }
+    try {
+        app = await App.findByIdAndDelete(req.params.id);
 
         if(!app) {
-            return res.status(404).send({message: 'Not found'});
-        }
-
-        res.send({message: app});
-    })
-}
-
-deleteApp = (req, res) => {
-    App.findByIdAndDelete(req.params.id, (err, app) => {
-        if(err) {
-            if(err.name == 'CastError') {
-                return res.status(403).send({message: 'Invalid id'});
-            }
-
-            return res.status(500).send({message: err.message});
-        }
-
-        if(!app) {
-            return res.status(404).send({message: `Can not delete app with ${req.params.id}`});
+            throw new error.Api404Error(`Can not delete app with ${req.params.id}`);
         }
 
         return res.send({message: app});
-    })
+    } catch(err) {
+
+        if(err.name == 'CastError') {
+            next(new error.ApiError('Forbidden', 403, true, 'Invalid id'));
+        }
+
+        next(new error.ApiError('ISE', 500, true, 'Internal Server Error'));
+    }
 }
 
 module.exports = {
