@@ -1,5 +1,6 @@
 const db = require('../models');
 const error = require('../errors');
+const StatusCodes = require('../utils/statusCodes');
 
 const App = db.app;
 const User = db.user;
@@ -40,12 +41,12 @@ createApp = async (req, res, next) => {
             try {
                 await App.findByIdAndDelete(savedapp._id).exec();
             } catch(err) {
-                next(new error.ApiError('ISE', 500, true, err.message));
+                next(new error.ApiError('ISE', StatusCodes.INTERNAL_SERVER_ERROR, true, err.message));
                 return;
             }          
         }
 
-        next(new error.ApiError('ISE', 500, true, err.message));
+        next(new error.ApiError('ISE', StatusCodes.INTERNAL_SERVER_ERROR, true, err.message));
     }
 };
 
@@ -59,7 +60,7 @@ getApps = async (req, res, next) => {
 
         res.send(apps);
     } catch(err) {
-        next(new error.ApiError('ISE', 500, true, err.message));
+        next(new error.ApiError('ISE', StatusCodes.INTERNAL_SERVER_ERROR, true, err.message));
     }
 }
 
@@ -77,10 +78,10 @@ getApp = async (req, res, next) => {
     } catch(err) {
         if(err) {
             if(err.name == 'CastError') {
-                next(new error.ApiError('Forbidden', 403, true, 'Invalid id'));
+                next(new error.ApiError('Bad request', StatusCodes.BAD_REQUEST, true, 'Invalid id'));
             }
 
-            next(new Error.ApiError('ISE', 500, true, err.message));
+            next(new Error.ApiError('ISE', StatusCodes.INTERNAL_SERVER_ERROR, true, err.message));
         }
     }
 }
@@ -98,10 +99,10 @@ updateApp = async (req, res, next) => {
         res.send({message: app});
     } catch(err) {
         if(err.name == 'CastError') {
-            next(new Error.ApiError('Forbidden', 400, true, 'Invalid id'));
+            next(new Error.ApiError('Bad request', StatusCodes.BAD_REQUEST, true, 'Invalid id'));
         }
 
-        next(new error.ApiError('ISE', 500, true, err.message));
+        next(new error.ApiError('ISE', StatusCodes.INTERNAL_SERVER_ERROR, true, err.message));
     }
 }
 
@@ -119,10 +120,10 @@ deleteApp = async (req, res, next) => {
     } catch(err) {
 
         if(err.name == 'CastError') {
-            next(new error.ApiError('Forbidden', 403, true, 'Invalid id'));
+            next(new error.ApiError('Bad request', StatusCodes.BAD_REQUEST, true, 'Invalid id'));
         }
 
-        next(new error.ApiError('ISE', 500, true, 'Internal Server Error'));
+        next(new error.ApiError('ISE', 500, StatusCodes.INTERNAL_SERVER_ERROR, 'Internal Server Error'));
     }
 }
 
