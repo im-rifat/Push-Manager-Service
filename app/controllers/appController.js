@@ -41,12 +41,12 @@ createApp = async (req, res, next) => {
             try {
                 await App.findByIdAndDelete(savedapp._id).exec();
             } catch(err) {
-                next(new error.ApiError('ISE', StatusCodes.INTERNAL_SERVER_ERROR, true, err.message));
+                next(err);
                 return;
             }          
         }
 
-        next(new error.ApiError('ISE', StatusCodes.INTERNAL_SERVER_ERROR, true, err.message));
+        next(err);
     }
 };
 
@@ -60,7 +60,7 @@ getApps = async (req, res, next) => {
 
         res.send(apps);
     } catch(err) {
-        next(new error.ApiError('ISE', StatusCodes.INTERNAL_SERVER_ERROR, true, err.message));
+        next(err);
     }
 }
 
@@ -71,17 +71,17 @@ getApp = async (req, res, next) => {
         app = await App.findById(req.params.id).exec();
 
         if(!app) {
-            throw new error.Api404Error(`Not found with id ${req.params.id}`);
+            return next(new error.Api404Error(`App not found with id ${req.params.id}`));
         }
 
         res.send(app);
     } catch(err) {
         if(err) {
             if(err.name == 'CastError') {
-                next(new error.ApiError('Bad request', StatusCodes.BAD_REQUEST, true, 'Invalid id'));
+                return next(new error.ApiError(StatusCodes.StatusCodes.BAD_REQUEST, 'Invalid id'));
             }
 
-            next(new Error.ApiError('ISE', StatusCodes.INTERNAL_SERVER_ERROR, true, err.message));
+            next(err);
         }
     }
 }
@@ -93,16 +93,16 @@ updateApp = async (req, res, next) => {
         app = await App.findByIdAndUpdate(req.params.id, req.body, {new: true, useFindAndModify: false}).exec();
 
         if(!app) {
-            throw new error.Api404Error(`Not found with id ${req.params.id}`);
+            return next(new error.Api404Error(`App not found with id ${req.params.id}`));
         }
 
         res.send({message: app});
     } catch(err) {
         if(err.name == 'CastError') {
-            next(new Error.ApiError('Bad request', StatusCodes.BAD_REQUEST, true, 'Invalid id'));
+            return next(new Error.ApiError(StatusCodes.StatusCodes.BAD_REQUEST, 'Invalid id'));
         }
 
-        next(new error.ApiError('ISE', StatusCodes.INTERNAL_SERVER_ERROR, true, err.message));
+        next(err);
     }
 }
 
@@ -113,17 +113,17 @@ deleteApp = async (req, res, next) => {
         app = await App.findByIdAndDelete(req.params.id);
 
         if(!app) {
-            throw new error.Api404Error(`Can not delete app with ${req.params.id}`);
+            return next(new error.Api404Error(`Can not delete app with ${req.params.id}`));
         }
 
         return res.send({message: app});
     } catch(err) {
 
         if(err.name == 'CastError') {
-            next(new error.ApiError('Bad request', StatusCodes.BAD_REQUEST, true, 'Invalid id'));
+            return next(new error.ApiError(StatusCodes.StatusCodes.BAD_REQUEST, 'Invalid id'));
         }
 
-        next(new error.ApiError('ISE', 500, StatusCodes.INTERNAL_SERVER_ERROR, 'Internal Server Error'));
+        next(err);
     }
 }
 

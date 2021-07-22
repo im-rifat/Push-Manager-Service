@@ -1,88 +1,84 @@
 const jwt = require('jsonwebtoken');
 const authConfig = require('../configs/authConfig');
 const db = require('../models');
+const StatusCodes = require('../utils/statusCodes');
+const error = require('../errors');
 
 const User = db.user;
 const Role = db.role;
 
-verifyToken = (req, res, next) => {
+verifyToken = async (req, res, next) => {
     let token = req.headers['x-access-token'];
 
     if (!token) {
-        res.status(403).send({ message: 'No token provided!' });
-        return;
+        return next(new error.ApiError(StatusCodes.StatusCodes.UNAUTHORIZED, 'No token provided'));
     }
 
-    jwt.verify(token, authConfig.secretKey, (err, decoded) => {
-        if (err) {
-            res.status(401).send({ message: 'Unauthorized!' });
-            return;
-        }
+    try {
+        let decoded = await jwt.verify(token, authConfig.secretKey);
 
         req.userId = decoded.id;
 
         next();
-    });
+    } catch(err) {
+        next(new error.ApiError(StatusCodes.StatusCodes.UNAUTHORIZED, err.message));
+    }
 };
 
-isAdmin = (req, res, next) => {
-    User.findById(req.userId)
-        .then((user) => {
+isAdmin = async (req, res, next) => {
+    let user;
 
-            Role.find({
-                _id: { $in: user.roles }
-            }, (err, roles) => {
-                if (err) {
-                    res.status(500).send({ message: err });
-                    return;
-                }
+    try {
+        user = User.findById(req.userId);
 
-                for (let i = 0; i < roles.length; i++) {
-                    if (roles[i].name == 'admin') {
-                        next();
-                        return;
-                    }
-                }
+        if(!user) {
+            return next(new error.Api404Error('User not found'));
+        }
 
-                res.status(403).send({ message: 'Require admin role!' });
-            });
-
-        })
-        .catch((err) => {
-            console.log(err);
-
-            res.status(500).send({ message: err });
+        let roles = await Role.find({
+            _id: {$in: user.roles}
         });
+
+        for (let i = 0; i < roles.length; i++) {
+            if (roles[i].name == 'admin') {
+                next();
+                return;
+            }
+        }
+
+        next(new error.ApiError(StatusCodes.StatusCodes.UNAUTHORIZED, 'Admin role required'));
+
+    } catch(err) {
+        next(err);
+    }
 };
 
-isModerator = (req, res, next) => {
-    User.findById(req.userId)
-        .then((user) => {
+isModerator = async (req, res, next) => {
+    let user;
 
-            Role.find({
-                _id: { $in: user.roles }
-            }, (err, roles) => {
-                if (err) {
-                    res.status(500).send({ message: err });
-                    return;
-                }
+    try {
+        user = User.findById(req.userId);
 
-                for (let i = 0; i < roles.length; i++) {
-                    if (roles[i].name == 'moderator') {
-                        next();
-                        return;
-                    }
-                }
+        if(!user) {
+            return next(new error.Api404Error('User not found'));
+        }
 
-                res.status(403).send({ message: 'Require moderator role!' });
-            });
-
-        })
-        .catch((err) => {
-            console.log(err);
-
-            res.status(500).send({ message: err });
+        let roles = await Role.find({
+            _id: {$in: user.roles}
         });
+
+        for (let i = 0; i < roles.length; i++) {
+            if (roles[i].name == 'moderator') {
+                next();
+                return;
+            }
+        }
+
+        next(new error.ApiError(StatusCodes.StatusCodes.UNAUTHORIZED, 'Moderator role required'));
+
+    } catch(err) {
+        next(err);
+    }
 };
 
 const authJwt = {

@@ -1,4 +1,6 @@
 const Joi = require('joi');
+const err = require('../errors');
+const StatusCodes = require('../utils/statusCodes');
 
 const REGX_USER_NAME = '^[a-zA-Z0-9]+([_.-])?([a-zA-Z0-9])+$'; 
 
@@ -9,7 +11,7 @@ function validateSignUpData(data) {
         .min(5).max(20).trim(true).required(),
         email: Joi.string().email().trim(true).required(),
         password: Joi.string().min(8).trim(true).required(),
-        roles: Joi.array().items(Joi.string().trim(true)).optional()
+        roles: Joi.array().items(Joi.string().trim(true).required()).optional()
     });
 
 
@@ -22,7 +24,7 @@ signUpValidationSchema = (req, res, next) => {
     const { error } = validateSignUpData(data);
 
     if (error) {
-        return res.status(400).send({ message: error.details[0].message });
+        return next(new err.ApiError(StatusCodes.StatusCodes.BAD_REQUEST, error.details[0].message));
     }
 
     next();

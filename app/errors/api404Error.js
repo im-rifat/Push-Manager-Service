@@ -3,7 +3,7 @@ const StatusCodes = require('../utils/statusCodes');
 
 class Api404Error extends ApiError {
     constructor(description) {
-        super('Not found!', StatusCodes.NOT_FOUND, description);
+        super(StatusCodes.StatusCodes.NOT_FOUND, description);
     }
 }
 
