@@ -12,7 +12,7 @@ sendNotification = async (req, res, next) => {
 
     try {
         let data = await axios.post(uri, {
-            "to": "/topics/news",
+            "to": "coDdcmCgTjyPTj4NM3FuF3:APA91bGmNC8k4CmxrRKuFq7b8m3Gt1T5gh5wUSu2LHdFUn2ijYdB8GiGYHISOjr4EkT7MKINJMwRQEdMwafMqVcMv_WcqIakjOfEP-r51yyxb64d5rBdbMTpQ8aQG9INwUWk5Caxb8wA",
             "notification": {
               "title": "Breaking News",
               "body": "New news story available."

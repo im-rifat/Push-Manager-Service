@@ -2,10 +2,12 @@ const authJwt = require('./authJwt');
 const verifySignUp = require('./verifySignUp');
 const validation = require('./validationSchema');
 const errorHandler = require('./errorHandler');
+const authKey = require('./authKey');
 
 module.exports = {
     verifySignUp,
     authJwt,
     validation,
-    errorHandler
+    errorHandler,
+    authKey
 };
