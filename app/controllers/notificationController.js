@@ -92,9 +92,6 @@ sendNotification = async (req, res, next) => {
               "story_id": "story_12345"
             }
           }, options);
-
-          console.log('hi');
-          console.log(data.status, data.statusText, data.data);
           
           res.send({
               status: data.status,

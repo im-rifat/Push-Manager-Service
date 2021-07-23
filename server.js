@@ -28,7 +28,6 @@ db.mongoose.connect(dbConfig.DB_URI, {
     useNewUrlParser: true, useUnifiedTopology: true
 })
     .then(() => {
-        console.log('successfully connected to db');
 
         initial();
 
@@ -39,7 +38,6 @@ db.mongoose.connect(dbConfig.DB_URI, {
         });
     })
     .catch((err) => {
-        console.log(err);
         process.exit();
     });
 
@@ -49,10 +47,6 @@ app.get('/', (req, res) => {
 
 function initial() {
     Role.estimatedDocumentCount((err, count) => {
-        if (err) {
-            console.log(err);
-        }
-
         if (!err && count == 0) {
 
             for (let i = 0; i < db.Roles.length; i++) {
@@ -70,10 +64,6 @@ function initial() {
     });
 
     AppType.estimatedDocumentCount((err, count) => {
-        if(err) {
-            console.log(err);
-        }
-
         if(!err && count == 0) {
             for(let i = 0; i < db.AppTypes.length; i++) {
                 new AppType({

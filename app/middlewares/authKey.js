@@ -8,12 +8,8 @@ const User = db.user;
 verifyKey = async (req, res, next) => {
     let key = req.headers['key'];
 
-    console.log(key);
-
     if(!key) {
-        console.log('inside if');
         return next(new error.ApiError(StatusCodes.StatusCodes.UNAUTHORIZED, 'No key provided'));
-        consolg.log('after return');
     }
 
     try {
