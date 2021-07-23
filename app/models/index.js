@@ -8,6 +8,7 @@ db.role = require('./role');
 db.apptype = require('./apptype');
 db.app = require('./app');
 db.device = require('./device');
+db.notification = require('./notification');
 
 db.Roles = ['user', 'moderator', 'admin'];
 db.AppTypes = ['android', 'ios', 'web'];

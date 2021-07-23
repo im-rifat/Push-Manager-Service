@@ -1,6 +1,77 @@
 const axios = require('axios');
 const error = require('../errors');
 const StatusCodes = require('../utils/statusCodes');
+const db = require('../models');
+
+const Notification = db.notification;
+
+const FCM_URI = 'https://fcm.googleapis.com/fcm/send';
+
+sendNotification1 = async (notification, res, next) => {
+
+  const options = {
+      headers: {'Content-Type': 'application/json',
+      'Authorization': `key=${notification.app.firebase_id}`}
+  };
+
+  try {
+      let data = await axios.post(FCM_URI, {
+          "to": `/topics/${notification.app.package_name}`,
+          "notification": {
+          "title": `${notification.title}`,
+          "body": `${notification.body}`
+        },
+        "data": Object.fromEntries(notification.data)
+      }, options);
+      
+      res.send({
+          status: data.status,
+          statusText: data.statusText,
+          data: data.data
+      });
+  } catch(err) {
+      next(err);
+  }
+}
+
+createNotification = async (req, res, next) => {
+  let data = req.body;
+
+  let notification;
+
+  try {
+    notification = await Notification({
+      title: data.title,
+      body: data.body,
+      data: data.data,
+      app: data.appId,
+      user: req.userId
+    }).save();
+
+    notification = await Notification
+    .findById(notification._id)
+    .populate('app').populate('user').exec();
+
+  } catch(err) {
+    if(notification) {
+      try {
+        await Notification.findByIdAndDelete(notification._id);
+      } catch(err) {
+        return next(err);
+      }
+    }
+
+    next(err);
+  }
+
+  if(notification) {
+    await sendNotification1(notification, res, next);
+    return 
+  }
+
+  return next(new error.ApiError(StatusCodes.StatusCodes.INTERNAL_SERVER_ERROR));
+
+};
 
 sendNotification = async (req, res, next) => {
     const uri = 'https://fcm.googleapis.com/fcm/send';
@@ -37,5 +108,6 @@ sendNotification = async (req, res, next) => {
 }
 
 module.exports = {
+    createNotification,
     sendNotification
 };
