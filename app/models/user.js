@@ -10,7 +10,7 @@ const UserSchema = new mongoose.Schema({
             ref: 'role'
         }
     ]
-});
+}, {timestamps: true});
 
 const User = mongoose.model('user', UserSchema);
 

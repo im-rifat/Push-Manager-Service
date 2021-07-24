@@ -3,16 +3,24 @@ const error = require('../errors');
 const StatusCodes = require('../utils/statusCodes');
 const db = require('../models');
 
+const App = db.app;
+
 const Notification = db.notification;
 
 const FCM_URI = 'https://fcm.googleapis.com/fcm/send';
 
 sendNotification1 = async (notification, res, next) => {
 
-  const options = {
-      headers: {'Content-Type': 'application/json',
-      'Authorization': `key=${notification.app.fcm_server_key}`}
-  };
+  let options;
+
+  try {
+      options = {
+        headers: {'Content-Type': 'application/json',
+        'Authorization': `key=${notification.app.fcm_server_key}`}
+      };
+  } catch(err) {
+    return next(err);
+  }
 
   try {
       let data = await axios.post(FCM_URI, {
@@ -36,6 +44,16 @@ sendNotification1 = async (notification, res, next) => {
 
 createNotification = async (req, res, next) => {
   let data = req.body;
+
+  try {
+    let app = await App.findById(data.appId).exec();
+
+    if(!app) {
+      return next(new error.Api404Error(`App not found with id ${data.appId}`));
+    }
+  } catch(err) {
+    return next(err);
+  }
 
   let notification;
 

@@ -25,12 +25,12 @@ signUp = async (req, res, next) => {
 
             user.roles = roles.map(role => role._id);
         } else {
-            role = await Role.find({name: 'user'}).exec();
+            role = await Role.findOne({name: 'user'}).exec();
 
             user.roles = [role._id];
         }
 
-        user.save();
+        await user.save();
 
         res.send({ message: 'User was registered successfully' });
     } catch(err) {
@@ -65,13 +65,13 @@ signIn = async (req, res, next) => {
         let accesstoken = token.create({id: user._id}, authConfig.accessTokenKey, authConfig.accessTokenLife);
         let refreshtoken = token.create({id: user._id}, authConfig.refreshTokenKey, authConfig.refreshTokenLife);
 
-        new RefreshToken({
+        await new RefreshToken({
             token: refreshtoken
         }).save();
 
         var authorities = [];
         for (let i = 0; i < user.roles.length; i++) {
-            authorities.push('ROLE_' + user.roles[i].name.toUpperCase());
+            if(!user.roles[i]) authorities.push('ROLE_' + user.roles[i].name.toUpperCase());
         }
 
         res.status(StatusCodes.StatusCodes.OK).send({
@@ -125,7 +125,7 @@ refreshToken = async (req, res, next) => {
     const newrefreshtoken = token.create({id: verified.id}, authConfig.refreshTokenKey, authConfig.refreshTokenLife);
 
     try {
-    await RefreshToken.findByIdAndUpdate(refreshToken._id, {token: newrefreshtoken}
+        await RefreshToken.findByIdAndUpdate(refreshToken._id, {token: newrefreshtoken}
         , {new: true, useFindAndModify: false}).exec();
 
         res.status(StatusCodes.StatusCodes.OK).send({
