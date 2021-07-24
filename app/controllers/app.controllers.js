@@ -1,6 +1,7 @@
 const db = require('../models');
 const error = require('../errors');
 const StatusCodes = require('../utils/statusCodes');
+const { populate } = require('../models/refreshtoken');
 
 const App = db.app;
 const User = db.user;
@@ -56,7 +57,7 @@ getApps = async (req, res, next) => {
     try {
         apps = await App.find({
             user: req.userId
-        }).populate('user').populate('app_type').exec();
+        }).populate('app_type', 'name').exec();
 
         res.send(apps);
     } catch(err) {
@@ -68,7 +69,7 @@ getApp = async (req, res, next) => {
     let app;
 
     try {
-        app = await App.findById(req.params.id).exec();
+        app = await App.findById(req.params.id).populate('app_type', 'name').exec();
 
         if(!app) {
             return next(new error.Api404Error(`App not found with id ${req.params.id}`));
@@ -90,7 +91,8 @@ updateApp = async (req, res, next) => {
     let app;
 
     try {
-        app = await App.findByIdAndUpdate(req.params.id, req.body, {new: true, useFindAndModify: false}).exec();
+        app = await App.findByIdAndUpdate(req.params.id, req.body, {new: true, useFindAndModify: false})
+        .populate('app_type', 'name').exec();
 
         if(!app) {
             return next(new error.Api404Error(`App not found with id ${req.params.id}`));

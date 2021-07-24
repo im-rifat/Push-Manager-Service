@@ -15,7 +15,7 @@ verifyToken = async (req, res, next) => {
     }
 
     try {
-        let decoded = await verify(token, authConfig.secretKey);
+        let decoded = await verify(token, authConfig.accessTokenKey);
 
         req.userId = decoded.id;
 

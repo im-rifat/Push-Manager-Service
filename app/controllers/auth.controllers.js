@@ -90,8 +90,6 @@ signIn = async (req, res, next) => {
 refreshToken = async (req, res, next) => {
     const {refreshToken : requestToken} = req.body;
 
-    console.log(requestToken);
-
     if(!requestToken) {
         return next(new error.TokenError('Refresh token is required'));
     }
@@ -103,10 +101,8 @@ refreshToken = async (req, res, next) => {
             token: requestToken
         }).exec();
 
-        console.log(refreshToken);
-
         if(!refreshToken) {
-            return next(new error.TokenError('Refresh token not found'));
+            return next(new error.TokenError('Refresh token not found. Please make a new sign in request.'));
         }
     } catch(err) {
         next(err);
@@ -114,14 +110,13 @@ refreshToken = async (req, res, next) => {
 
     let verified;
     try {
-        verified = token.verify(refreshToken, authConfig.refreshTokenKey);
+        verified = await token.verify(refreshToken.token, authConfig.refreshTokenKey);
     } catch(err) {
         await RefreshToken.findByIdAndDelete(refreshToken._id).exec();
         return next(new error.TokenError('Refresh token expired. Please make a new sign in request.'));
     }
 
-    if(!verified) {
-            
+    if(!verified) {            
         await RefreshToken.findByIdAndDelete(refreshToken._id).exec();
         return next(new error.TokenError('Refresh token expired. Please make a new sign in request.'));
     }
@@ -134,7 +129,8 @@ refreshToken = async (req, res, next) => {
         , {new: true, useFindAndModify: false}).exec();
 
         res.status(StatusCodes.StatusCodes.OK).send({
-            accessToken: newaccesstoken
+            accessToken: newaccesstoken,
+            refreshToken: newrefreshtoken
         });
     } catch(err) {
         next(err);
