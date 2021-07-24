@@ -1,0 +1,345 @@
+{
+	"info": {
+		"_postman_id": "12ffa0be-cece-4d81-af28-fc0e46b8dfd6",
+		"name": "Push Manager Service",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "sign in",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"abc\",\r\n    \"password\": \"abc\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/auth/signin",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"auth",
+						"signin"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "sign up",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"a_1234_\",\r\n    \"email\": \"abc@demo.com\",\r\n    \"password\": \"abcsd\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/auth/signup",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"auth",
+						"signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get all apps",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-access-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwZjE3MDAwYTU4Zjg3NDZlYzA5NjI5ZiIsImlhdCI6MTYyNjQzNjk0OCwiZXhwIjoxNjI2NDM3NTQ4fQ.GJNo99tBJR3CQvyKm4sryTtsHDtPRLAvnEJkODHNBt4",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/api/test/user",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"test",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create new app",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-access-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwZmJkMTA0OGVhYTNhMTg2NDUwMzVmMiIsImlhdCI6MTYyNzExODI0OCwiZXhwIjoxNjI3MTE4NTQ4fQ.QNL6yAyuoaGCcl1synlCzpIMktZUbkfTAxyCqc2K9jU",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"pms demo app\",\r\n    \"package\": \"com.pmsapp.android.dem_1o\",\r\n    \"fcm_key\": \"AAAAQJFYZKQ:APA91bGSG7PjJyQcRavnf1BXUVyo9vH5olD3T73Doxivf6sOR9semXdZw6FEX2WcfZMSKRqraMwke1msz8cNvPmfs9SN8xugVH20GYY43iDzVbS9rfbFwQPPNl8kfpKQHif9DzU1JrDm\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/content/app",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"content",
+						"app"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update specific app",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "x-access-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwZmJkMTA0OGVhYTNhMTg2NDUwMzVmMiIsImlhdCI6MTYyNzExNTgwMiwiZXhwIjoxNjI3MTE2MTAyfQ.VzKNuwrUMLC0fmU-OEDvG6u3hX06R4J4PYwN9jEBN5Q",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"package_name\": \"com.pmsapp.android.demo\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/content/app/60fbd1338eaa3a18645035fa",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"content",
+						"app",
+						"60fbd1338eaa3a18645035fa"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "send notification to a specific app",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-access-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwZmJkMTA0OGVhYTNhMTg2NDUwMzVmMiIsImlhdCI6MTYyNzExNjUxNiwiZXhwIjoxNjI3MTE2ODE2fQ.GgPaEFSaLwFjlOH7dXAyEFpUj5VNDbFb96VBn5sz8kg",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"Hello World\",\r\n    \"body\": \"This is a body\",\r\n    \"data\": {\r\n        \"key1\" : \"val1\",\r\n        \"key2\": \"val2\",\r\n        \"key3\": \"val3\"\r\n    },\r\n    \"appId\": \"60fbd1338eaa3a18645035fa\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/content/notification",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"content",
+						"notification"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "generate key for client app (not implemented)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-access-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwZjE3MDAwYTU4Zjg3NDZlYzA5NjI5ZiIsImlhdCI6MTYyNzExMTU5OSwiZXhwIjoxNjI3MTExODk5fQ.VKUTxYWSXfyS4Fgd23ermB8bKAwJUdVN_i0gD5kvCqw",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/api/content/generatekey",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"content",
+						"generatekey"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "registration device (not implemented)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "key",
+						"value": "08ba83f7ae450c9acd7e4fce",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/api/device/enrolltoken",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"device",
+						"enrolltoken"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "refresh token",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"refreshToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwZmJkMTA0OGVhYTNhMTg2NDUwMzVmMiIsImlhdCI6MTYyNzExNjUxNiwiZXhwIjoxNjI3MTE3MTE2fQ.olemxbT1SnpYPenewhgKPOGF9enFqITea26DDc_698Y\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/auth/refreshtoken",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"auth",
+						"refreshtoken"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get specific app",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-access-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwZjE3MDAwYTU4Zjg3NDZlYzA5NjI5ZiIsImlhdCI6MTYyNzExMzIzNywiZXhwIjoxNjI3MTEzNTM3fQ._oNBfM0_ULClBBoIExmhWcdKlGkRPHH9qgZp_mOST1w",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/api/content/app/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"content",
+						"app",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete app",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "x-access-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwZjE3MDAwYTU4Zjg3NDZlYzA5NjI5ZiIsImlhdCI6MTYyNjg4NzA3OCwiZXhwIjoxNjI2ODg3Njc4fQ.3OqYSWi_ZHSm58CheT-Id2MbxIg9RsC2xxPx61rbrcM",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/api/content/app/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"content",
+						"app",
+						"1"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

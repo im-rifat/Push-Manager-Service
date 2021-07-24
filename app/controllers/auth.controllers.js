@@ -71,7 +71,7 @@ signIn = async (req, res, next) => {
 
         var authorities = [];
         for (let i = 0; i < user.roles.length; i++) {
-            if(!user.roles[i]) authorities.push('ROLE_' + user.roles[i].name.toUpperCase());
+            if(user.roles[i]) authorities.push('ROLE_' + user.roles[i].name.toUpperCase());
         }
 
         res.status(StatusCodes.StatusCodes.OK).send({

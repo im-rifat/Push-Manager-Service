@@ -14,7 +14,7 @@ createApp = async (req, res, next) => {
         let newapp = new App({
             name: req.body.name,
             package_name: req.body.package,
-            fcm_server_key: req.body.fId
+            fcm_server_key: req.body.fcm_key
         });
 
         savedapp = await newapp.save();

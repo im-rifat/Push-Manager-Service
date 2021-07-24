@@ -23,7 +23,7 @@ function validateAppData(data) {
     const schema = Joi.object({
         name: Joi.string().trim(true).required(),
         package: Joi.string().regex(RegExp(REGX_ANDROID_PACKAGE_NAME)).trim(true).required(),
-        fId: Joi.string().trim(true).required()
+        fcm_key: Joi.string().trim(true).required()
     });
 
     return schema.validate(data);
