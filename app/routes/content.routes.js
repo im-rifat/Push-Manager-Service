@@ -2,8 +2,8 @@ const Router = new require('express').Router();
 const crypto = require('../utils/crypto');
 const User = require('../models/user');
 
-Router.use('/app', require('./appRoutes'));
-Router.use('/notification', require('./notificationRoutes'));
+Router.use('/app', require('./app.routes'));
+Router.use('/notification', require('./notification.routes'));
 Router.get('/generatekey', async (req, res, next) => {
 
     try {

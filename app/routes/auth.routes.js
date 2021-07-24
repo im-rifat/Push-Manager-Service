@@ -1,5 +1,5 @@
 const { verifySignUp, validation } = require("../middlewares");
-const controller = require("../controllers/authController");
+const controller = require("../controllers/auth.controllers");
 const express = require('express');
 
 const Router = new express.Router();

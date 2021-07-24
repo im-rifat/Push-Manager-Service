@@ -1,5 +1,5 @@
 const {verify} = require('../utils/token');
-const authConfig = require('../configs/authConfig');
+const authConfig = require('../configs/auth.config');
 const db = require('../models');
 const StatusCodes = require('../utils/statusCodes');
 const error = require('../errors');

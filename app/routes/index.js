@@ -1,1 +1,1 @@
-module.exports = require('./apiRoutes');
+module.exports = require('./api.routes');

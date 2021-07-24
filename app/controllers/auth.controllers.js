@@ -1,4 +1,4 @@
-const authConfig = require('../configs/authConfig');
+const authConfig = require('../configs/auth.config');
 const StatusCodes = require('../utils/statusCodes');
 const error = require('../errors');
 const bcrypt = require('bcryptjs');
