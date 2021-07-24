@@ -6,7 +6,7 @@ const schema = new mongoose.Schema({
     firebase_id: String,
     user: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'user'
     },
     app_type: {
         type: mongoose.Schema.Types.ObjectId,
@@ -14,6 +14,6 @@ const schema = new mongoose.Schema({
     }
 }, {timestamps: true});
 
-const App = mongoose.model('App', schema);
+const App = mongoose.model('app', schema);
 
 module.exports = App;

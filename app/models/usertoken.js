@@ -1,14 +1,13 @@
 const mongoose = require('mongoose');
 
 const Schema = new mongoose.Schema({
-    token: String,
-    data: String,
-    app: {
+    user: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'app'
-    }
+        ref: 'user'
+    },
+    token: String
 }, {timestamps: true});
 
-const Device = mongoose.model('device', Schema);
+const UserToken = mongoose.model('usertoken', Schema);
 
-module.exports = Device;
+module.exports = UserToken;

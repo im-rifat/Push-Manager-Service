@@ -9,14 +9,14 @@ const Schema = new mongoose.Schema({
     },
     app: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'App'
+        ref: 'app'
     },
     user: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'user'
     }
 }, {timestamps: true});
 
-const Notification = mongoose.model('Notification', Schema);
+const Notification = mongoose.model('notification', Schema);
 
 module.exports = Notification;
