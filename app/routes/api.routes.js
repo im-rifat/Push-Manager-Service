@@ -16,9 +16,15 @@ Router.use(function(req, res, next) {
 Router.use('/content', [authJwt.verifyToken], contentRoutes);
 
 Router.use('/admin', (req, res, next) => {
+    res.send({
+        message: 'Not implemented yet'
+    });
 });
 
 Router.use('/moderator', (req, res, next) => {
+    res.send({
+        message: 'Not implemented yet'
+    });
 });
 
 Router.use('/auth', authRoutes);
