@@ -14,7 +14,7 @@ createApp = async (req, res, next) => {
         let newapp = new App({
             name: req.body.name,
             package_name: req.body.package,
-            firebase_id: req.body.fId
+            fcm_server_key: req.body.fId
         });
 
         savedapp = await newapp.save();
@@ -33,7 +33,7 @@ createApp = async (req, res, next) => {
             id: savedapp._id,
             name: savedapp.name,
             package: savedapp.package_name,
-            firebase_id: savedapp.firebase_id,
+            fcm_server_key: savedapp.fcm_server_key,
             app_type: apptype._id
         });
 

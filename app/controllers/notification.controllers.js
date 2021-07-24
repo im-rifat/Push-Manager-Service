@@ -11,7 +11,7 @@ sendNotification1 = async (notification, res, next) => {
 
   const options = {
       headers: {'Content-Type': 'application/json',
-      'Authorization': `key=${notification.app.firebase_id}`}
+      'Authorization': `key=${notification.app.fcm_server_key}`}
   };
 
   try {
