@@ -10,8 +10,9 @@ Router.post('/signup',
                 verifySignUp.checkDuplicateUsernameOrEmail,
                 verifySignUp.checkRoleExisted
             ],
-            controller.signup);
+            controller.signUp);
 
 Router.post('/signin',controller.signIn);
+Router.post('/refreshtoken', controller.refreshToken);
 
 module.exports = Router;

@@ -9,7 +9,7 @@ db.apptype = require('./apptype');
 db.app = require('./app');
 db.device = require('./device');
 db.notification = require('./notification');
-db.usertoken = require('./usertoken');
+db.refreshtoken = require('./refreshtoken');
 
 db.Roles = ['user', 'moderator', 'admin'];
 db.AppTypes = ['android', 'ios', 'web'];

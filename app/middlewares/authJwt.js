@@ -1,4 +1,4 @@
-const jwt = require('jsonwebtoken');
+const {verify} = require('../utils/token');
 const authConfig = require('../configs/authConfig');
 const db = require('../models');
 const StatusCodes = require('../utils/statusCodes');
@@ -15,7 +15,7 @@ verifyToken = async (req, res, next) => {
     }
 
     try {
-        let decoded = await jwt.verify(token, authConfig.secretKey);
+        let decoded = await verify(token, authConfig.secretKey);
 
         req.userId = decoded.id;
 

@@ -1,15 +1,12 @@
 const authConfig = require('../configs/authConfig');
-const db = require('../models');
 const StatusCodes = require('../utils/statusCodes');
 const error = require('../errors');
-
-const User = db.user;
-const Role = db.role;
-
-const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const token = require('../utils/token');
 
-signup = async (req, res, next) => {
+const {user: User, role: Role, refreshtoken: RefreshToken} = require('../models');
+
+signUp = async (req, res, next) => {
     let savedUser;
     let role;
 
@@ -65,9 +62,12 @@ signIn = async (req, res, next) => {
             return next(new error.ApiError(StatusCodes.StatusCodes.UNAUTHORIZED, 'Invalid password'));
         }
 
-        let token = jwt.sign({ id: user._id }, authConfig.secretKey, {
-            expiresIn: authConfig.accessTokenLife,
-        });
+        let accesstoken = token.create({id: user._id}, authConfig.accessTokenKey, authConfig.accessTokenLife);
+        let refreshtoken = token.create({id: user._id}, authConfig.refreshTokenKey, authConfig.refreshTokenLife);
+
+        new RefreshToken({
+            token: refreshtoken
+        }).save();
 
         var authorities = [];
         for (let i = 0; i < user.roles.length; i++) {
@@ -79,7 +79,62 @@ signIn = async (req, res, next) => {
             username: user.username,
             email: user.email,
             roles: authorities,
-            accessToken: token
+            accessToken: accesstoken,
+            refreshToken: refreshtoken
+        });
+    } catch(err) {
+        next(err);
+    }
+};
+
+refreshToken = async (req, res, next) => {
+    const {refreshToken : requestToken} = req.body;
+
+    console.log(requestToken);
+
+    if(!requestToken) {
+        return next(new error.TokenError('Refresh token is required'));
+    }
+
+    let refreshToken;
+
+    try {
+        refreshToken = await RefreshToken.findOne({
+            token: requestToken
+        }).exec();
+
+        console.log(refreshToken);
+
+        if(!refreshToken) {
+            return next(new error.TokenError('Refresh token not found'));
+        }
+    } catch(err) {
+        next(err);
+    }
+
+    let verified;
+    try {
+        verified = token.verify(refreshToken, authConfig.refreshTokenKey);
+    } catch(err) {
+        await RefreshToken.findByIdAndDelete(refreshToken._id).exec();
+        return next(new error.TokenError('Refresh token expired. Please make a new sign in request.'));
+    }
+
+    if(!verified) {
+            
+        await RefreshToken.findByIdAndDelete(refreshToken._id).exec();
+        return next(new error.TokenError('Refresh token expired. Please make a new sign in request.'));
+    }
+
+    const newaccesstoken = token.create({id: verified.id}, authConfig.accessTokenKey, authConfig.accessTokenLife);
+    const newrefreshtoken = token.create({id: verified.id}, authConfig.refreshTokenKey, authConfig.refreshTokenLife);
+
+    try {
+    await RefreshToken.findByIdAndUpdate(refreshToken._id, {token: newrefreshtoken}
+        , {new: true, useFindAndModify: false}).exec();
+
+        res.status(StatusCodes.StatusCodes.OK).send({
+            accessToken: newaccesstoken
         });
     } catch(err) {
         next(err);
@@ -87,6 +142,7 @@ signIn = async (req, res, next) => {
 };
 
 module.exports = {
-    signup,
-    signIn
+    signUp,
+    signIn,
+    refreshToken
 };
