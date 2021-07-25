@@ -34,7 +34,7 @@ createApp = async (req, res, next) => {
             name: savedapp.name,
             package: savedapp.package_name,
             fcm_server_key: savedapp.fcm_server_key,
-            app_type: apptype._id
+            app_type: apptype.name
         });
 
     } catch(err) {
@@ -57,7 +57,8 @@ getApps = async (req, res, next) => {
     try {
         apps = await App.find({
             user: req.userId
-        }).populate('app_type', 'name').exec();
+        }).select('_id name package_name fcm_server_key')
+        .populate('app_type', 'name -_id').exec();
 
         res.send(apps);
     } catch(err) {
@@ -69,7 +70,8 @@ getApp = async (req, res, next) => {
     let app;
 
     try {
-        app = await App.findById(req.params.id).populate('app_type', 'name').exec();
+        app = await App.findById(req.params.id).
+        select('_id name package_name fcm_server_key').populate('app_type', 'name').exec();
 
         if(!app) {
             return next(new error.Api404Error(`App not found with id ${req.params.id}`));
@@ -92,6 +94,7 @@ updateApp = async (req, res, next) => {
 
     try {
         app = await App.findByIdAndUpdate(req.params.id, req.body, {new: true, useFindAndModify: false})
+        .select('_id name package_name fcm_server_key')
         .populate('app_type', 'name').exec();
 
         if(!app) {
@@ -112,7 +115,9 @@ deleteApp = async (req, res, next) => {
     let app;
 
     try {
-        app = await App.findByIdAndDelete(req.params.id);
+        app = await App.findByIdAndDelete(req.params.id)
+        .select('_id name package_name fcm_server_key')
+        .populate('app_type', 'name').exec();
 
         if(!app) {
             return next(new error.Api404Error(`Can not delete app with ${req.params.id}`));
