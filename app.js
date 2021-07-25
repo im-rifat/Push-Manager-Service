@@ -3,19 +3,14 @@ require('dotenv').config();
 const express = require('express');
 
 const app = express();
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 const cors = require('cors');
 let corsOptions = {
     origin: 'http::/localhost:8081'
 };
-
 app.use(cors(corsOptions));
-
-// parse requests of content-type: application/json
-app.use(express.json());
-
-// parse requests of content-type: application/x-www-form-urlencoded
-app.use(express.urlencoded({ extended: true }));
 
 const compression = require('compression');
 const shouldCompress = (req, res) => {
@@ -25,10 +20,11 @@ const shouldCompress = (req, res) => {
 
     return compression.filter(req, res);
 }
-
 app.use(compression({
     filter: shouldCompress
 }));
+
+app.use(require('helmet')());
 
 
 app.use('/api', require('./app/routes'));
