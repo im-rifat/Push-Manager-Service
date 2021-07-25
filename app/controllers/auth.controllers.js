@@ -66,7 +66,8 @@ signIn = async (req, res, next) => {
         let refreshtoken = token.create({id: user._id}, authConfig.refreshTokenKey, authConfig.refreshTokenLife);
 
         await new RefreshToken({
-            token: refreshtoken
+            token: refreshtoken,
+            user: user._id
         }).save();
 
         var authorities = [];
