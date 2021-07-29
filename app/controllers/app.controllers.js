@@ -2,6 +2,7 @@ const db = require('../models');
 const error = require('../errors');
 const StatusCodes = require('../utils/statusCodes');
 const { populate } = require('../models/refreshtoken');
+const { mongoose } = require('../models');
 
 const App = db.app;
 const User = db.user;
@@ -58,7 +59,13 @@ getApps = async (req, res, next) => {
         apps = await App.find({
             user: req.userId
         }).select('_id name package_name fcm_server_key')
-        .populate('app_type', 'name -_id').exec();
+        .populate('app_type', 'name -_id').lean().exec(); //lean converts mongoose Document to plain javascript object
+
+        apps.forEach(item => {
+            if(item.app_type) {
+                item.app_type = item.app_type.name;
+            }
+        });
 
         res.send(apps);
     } catch(err) {
@@ -71,10 +78,14 @@ getApp = async (req, res, next) => {
 
     try {
         app = await App.findById(req.params.id).
-        select('_id name package_name fcm_server_key').populate('app_type', 'name').exec();
+        select('_id name package_name fcm_server_key').populate('app_type', 'name').lean().exec();
 
         if(!app) {
             return next(new error.Api404Error(`App not found with id ${req.params.id}`));
+        }
+
+        if(app.app_type) {
+            app.app_type = app.app_type.name;
         }
 
         res.send(app);
@@ -95,10 +106,14 @@ updateApp = async (req, res, next) => {
     try {
         app = await App.findByIdAndUpdate(req.params.id, req.body, {new: true, useFindAndModify: false})
         .select('_id name package_name fcm_server_key')
-        .populate('app_type', 'name').exec();
+        .populate('app_type', 'name').lean().exec();
 
         if(!app) {
             return next(new error.Api404Error(`App not found with id ${req.params.id}`));
+        }
+
+        if(app.app_type) {
+            app.app_type = app.app_type.name;
         }
 
         res.send({message: app});
@@ -117,12 +132,16 @@ deleteApp = async (req, res, next) => {
     try {
         app = await App.findByIdAndDelete(req.params.id)
         .select('_id name package_name fcm_server_key')
-        .populate('app_type', 'name').exec();
+        .populate('app_type', 'name').lean().exec();
 
         if(!app) {
             return next(new error.Api404Error(`Can not delete app with ${req.params.id}`));
         }
 
+        if(app.app_type) {
+            app.app_type = app.app_type.name;
+        }
+        
         return res.send({message: app});
     } catch(err) {
 
